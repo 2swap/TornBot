@@ -9,6 +9,8 @@ public class BotListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent e) {
+		if(!e.getTextChannel().getId().equals(Manager.bots.getId())) return; 
+		if(e.getMessage().getContent().toLowerCase().contains("updateroles")) Manager.tornUpdate();
 	}
 
 	@Override

@@ -28,14 +28,16 @@ public class Manager {
 		int ct = 0;
 		//Update each player
 		for(Member m : g.getMembers()) {
-			ct += updateOnePlayer(m);
+			int o = updateOnePlayer(m);
+			if(o == 1) System.out.println("Updated " + m.getEffectiveName());
+			ct += o;
 		}
 		
 		sendMessage(ct + " players updated.", bots);
 	}
 	
 	public static int updateOnePlayer(Member m) {
-
+		int o = 0;
 		if(m.getUser().isBot()) return 0;
 
 		String correctRank = truthRank.get(m.getEffectiveName().toLowerCase());
@@ -46,20 +48,20 @@ public class Manager {
 		boolean hasSide = false;
 		for(Role r : m.getRoles()) {
 			if(contains(roles,r.getId())) { // dont remove any non-rank roles
-				if(correctRank == null || !correctRank.equals(r.getId())) cont.removeSingleRoleFromMember(m, r).complete();
+				if(correctRank == null || !correctRank.equals(r.getId())) {cont.removeSingleRoleFromMember(m, r).complete(); o=1;}
 				else hasRank = true;
 			}
 			if(contains(rolesHA,r.getId())) { // dont remove any non-rank roles
-				if(correctSide == null || !correctSide.equals(r.getId())) cont.removeSingleRoleFromMember(m, r).complete();
+				if(correctSide == null || !correctSide.equals(r.getId())) {cont.removeSingleRoleFromMember(m, r).complete(); o=1;}
 				else hasSide = true;
 			}
 		}
-		if(correctRank == "" || correctSide == "" || correctRank == null || correctSide == null) return 1;
+		if(correctRank == "" || correctSide == "" || correctRank == null || correctSide == null) return o;
 
-		if(!hasRank) cont.addSingleRoleToMember(m, g.getRoleById(correctRank)).complete();
-		if(!hasSide) cont.addSingleRoleToMember(m, g.getRoleById(correctSide)).complete();
+		if(!hasRank) {cont.addSingleRoleToMember(m, g.getRoleById(correctRank)).complete(); o=1;}
+		if(!hasSide) {cont.addSingleRoleToMember(m, g.getRoleById(correctSide)).complete(); o=1;}
 		
-		return 1;
+		return o;
 	}
 	
 	private static boolean contains(String[] arr, String s) {
@@ -68,6 +70,7 @@ public class Manager {
 	}
 
 	public static void getTruth() {
+		System.out.println("Getting truth");
 		String doc = Web.getWebInfo("https://torn.space/leaderboard");
 		String[] spl = doc.split("</tr>");
 		truthRank.clear();
@@ -97,10 +100,11 @@ public class Manager {
 			truthRank.put(name, rank);
 			
 			String side = "";
-			if(color.contains("pink")) side = rolesHA[0];
-			else if(color.contains("cyan")) side = rolesHA[1];
+			if(color.contains("pink")) side = rolesHA[1];
+			else if(color.contains("cyan")) side = rolesHA[0];
 			truthSide.put(name, side);
 		}
+		System.out.println("Got truth");
 	}
 	
 	public static void sendMessage(String msg, TextChannel tc) {
