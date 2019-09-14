@@ -87,10 +87,7 @@ public class Manager {
 			int place = sc.nextInt();
 			spl[i] = spl[i].replace(place+"", "").substring(11);
 			String name = spl[i];
-			if(name.charAt(0) == '[') {
-				name = name.split(" ")[1];
-				System.out.println(name);
-			}
+			if(name.charAt(0) == '[') name = name.split(" ")[1];
 			else name = name.split(" ")[0];
 			sc.close();
 			
