@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.List;
 
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -27,7 +28,8 @@ public class Manager {
 
 		int ct = 0;
 		//Update each player
-		for(Member m : g.getMembers()) {
+		List<Member> members = g.getMembers();
+		for(Member m : members) {
 			int o = updateOnePlayer(m);
 			if(o == 1) System.out.println("Updated " + m.getEffectiveName());
 			ct += o;
@@ -39,9 +41,10 @@ public class Manager {
 	public static int updateOnePlayer(Member m) {
 		int o = 0;
 		if(m.getUser().isBot()) return 0;
-
-		String correctRank = truthRank.get(m.getEffectiveName().toLowerCase());
-		String correctSide = truthSide.get(m.getEffectiveName().toLowerCase());
+		
+		String name = m.getEffectiveName().toLowerCase();
+		String correctRank = truthRank.get(name);
+		String correctSide = truthSide.get(name);
 		
 		//remove bad roles
 		boolean hasRank = false;
@@ -70,7 +73,7 @@ public class Manager {
 	}
 
 	public static void getTruth() {
-		System.out.println("Getting truth");
+		System.out.println("Getting truth...");
 		String doc = Web.getWebInfo("https://torn.space/leaderboard");
 		String[] spl = doc.split("</tr>");
 		truthRank.clear();
@@ -83,7 +86,9 @@ public class Manager {
 			Scanner sc = new Scanner(spl[i]);
 			int place = sc.nextInt();
 			spl[i] = spl[i].replace(place+"", "").substring(11);
-			String name = spl[i].split(" ")[0];
+			String name = spl[i];
+			if(name.contains(" ")) name = name.split(" ")[1];
+			System.out.println(name);
 			sc.close();
 			
 			String rank = "";
@@ -102,7 +107,7 @@ public class Manager {
 			String side = "";
 			if(color.contains("pink")) side = rolesHA[1];
 			else if(color.contains("cyan")) side = rolesHA[0];
-			truthSide.put(name, side);
+			if(side.length() > 0) truthSide.put(name, side);
 		}
 		System.out.println("Got truth");
 	}
