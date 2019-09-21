@@ -1,22 +1,21 @@
 import java.util.HashMap;
 import java.util.Scanner;
+
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.TextChannel;
 import java.util.List;
 
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.managers.GuildController;
 
 public class Manager {
 	public static HashMap<String,String> truthRank = new HashMap<>();
 	public static HashMap<String,String> truthSide = new HashMap<>();
 
-	public static Guild g = DiscordBot.jda.getGuildById("247490958374076416");
-	public static GuildController cont = g.getController();
+	public static Guild cont = DiscordBot.jda.getGuildById("247490958374076416");
 	
-	public static TextChannel bots = g.getTextChannelById("493489353046097926");
-	public static TextChannel gen = g.getTextChannelById("247490958374076416");
+	public static TextChannel bots = cont.getTextChannelById("493489353046097926");
+	public static TextChannel gen = cont.getTextChannelById("247490958374076416");
 	
 	public static String[] roles = {"453678967996678145", "453678938275708960", "453678890628546560", "453678855534804992", "453612904365948929", "453620521632923660", "453620581041045555", "453620631116709888", "453620675526000674", "453620720581214208"};
 	public static String[] rolesHA = {"513781861542002690", "524288679473184806"};
@@ -28,7 +27,7 @@ public class Manager {
 
 		int ct = 0;
 		//Update each player
-		List<Member> members = g.getMembers();
+		List<Member> members = cont.getMembers();
 		for(Member m : members) {
 			int o = updateOnePlayer(m);
 			if(o == 1) System.out.println("Updated " + m.getEffectiveName());
@@ -51,18 +50,18 @@ public class Manager {
 		boolean hasSide = false;
 		for(Role r : m.getRoles()) {
 			if(contains(roles,r.getId())) { // dont remove any non-rank roles
-				if(correctRank == null || !correctRank.equals(r.getId())) {cont.removeSingleRoleFromMember(m, r).complete(); o=1;}
+				if(correctRank == null || !correctRank.equals(r.getId())) {cont.removeRoleFromMember(m, r).complete(); o=1;}
 				else hasRank = true;
 			}
 			if(contains(rolesHA,r.getId())) { // dont remove any non-rank roles
-				if(correctSide == null || !correctSide.equals(r.getId())) {cont.removeSingleRoleFromMember(m, r).complete(); o=1;}
+				if(correctSide == null || !correctSide.equals(r.getId())) {cont.removeRoleFromMember(m, r).complete(); o=1;}
 				else hasSide = true;
 			}
 		}
 		if(correctRank == "" || correctSide == "" || correctRank == null || correctSide == null) return o;
-
-		if(!hasRank) {cont.addSingleRoleToMember(m, g.getRoleById(correctRank)).complete(); o=1;}
-		if(!hasSide) {cont.addSingleRoleToMember(m, g.getRoleById(correctSide)).complete(); o=1;}
+		
+		if(!hasRank) {cont.addRoleToMember(m, cont.getRoleById(correctRank)).complete(); o=1;}
+		if(!hasSide) {cont.addRoleToMember(m, cont.getRoleById(correctSide)).complete(); o=1;}
 		
 		return o;
 	}
