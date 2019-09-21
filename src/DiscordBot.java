@@ -11,9 +11,6 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class DiscordBot {
-
-	public static JDA jda;
-	public static String token;
 	
 	public static void main(String[] args) {
 		try {
@@ -30,5 +27,8 @@ public class DiscordBot {
 			catch(InterruptedException ex) { Thread.currentThread().interrupt(); }
 		}
 	}
+
+	public static JDA jda;
+	public static String token;
 	
 }
