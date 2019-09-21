@@ -26,7 +26,7 @@ public class DiscordBot {
 		
 		while(true){
 			Manager.tornUpdate();
-			try { Thread.sleep(1000*60*60*24); }
+			try { Thread.sleep(1000*60*60); }
 			catch(InterruptedException ex) { Thread.currentThread().interrupt(); }
 		}
 	}
