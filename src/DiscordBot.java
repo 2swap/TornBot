@@ -1,14 +1,11 @@
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import javax.security.auth.login.LoginException;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
 
 public class DiscordBot {
 
@@ -20,9 +17,9 @@ public class DiscordBot {
 			Scanner sc = new Scanner(new File("token.txt"));
 			token = sc.nextLine();
 			sc.close();
-			jda = new JDABuilder(AccountType.BOT).addEventListener(new BotListener()).setToken(token).buildBlocking();
+			jda = new JDABuilder(AccountType.BOT).addEventListeners(new BotListener()).setToken(token).build().awaitReady();
 		}
-		catch (LoginException | IllegalArgumentException | InterruptedException | RateLimitedException | FileNotFoundException e) { e.printStackTrace(); }
+		catch (Throwable e) { e.printStackTrace(); }
 		
 		while(true){
 			Manager.tornUpdate();
